@@ -104,6 +104,115 @@ function removeLiquidity(uint256 id) external {
     reserveB -= r.amountB;
 }
 
+## 另附本实验具体完整代码如下：
+    // SPDX-License-Identifier: MIT
+    pragma solidity ^0.8.20;
+
+    import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.0.2/contracts/token/ERC20/ERC20.sol";
+    import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.0.2/contracts/token/ERC721/ERC721.sol";
+    import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.0.2/contracts/token/ERC20/IERC20.sol";
+
+    contract TokenA is ERC20 {
+    constructor() ERC20("TokenA", "TKA") { _mint(msg.sender, 1000000 * 10 ** decimals()); }
+    function faucet() external { _mint(msg.sender, 100 * 10 ** decimals()); }
+}
+
+    contract TokenB is ERC20 {
+    constructor() ERC20("TokenB", "TKB") { _mint(msg.sender, 1000000 * 10 ** decimals()); }
+    function faucet() external { _mint(msg.sender, 100 * 10 ** decimals()); }
+}
+
+    contract LPToken is ERC721 {
+    uint256 public nextTokenId;
+    address public dex;
+    constructor() ERC721("LP Token", "LP") {}
+    function setDex(address _dex) external { dex = _dex; }
+    function mint(address to) external returns (uint256) {
+        require(msg.sender == dex, "only dex");
+        uint256 id = nextTokenId++;
+        _mint(to, id);
+        return id;
+    }
+    function burn(uint256 id) external {
+        require(msg.sender == dex, "only dex");
+        _burn(id);
+    }
+}
+
+    contract SimpleDEX {
+    IERC20 public tokenA;
+    IERC20 public tokenB;
+    LPToken public lp;
+    uint256 public reserveA;
+    uint256 public reserveB;
+
+    struct Record { uint256 amountA; uint256 amountB; }
+    mapping(uint256 => Record) public records;
+
+    constructor(address _a, address _b, address _lp) {
+        tokenA = IERC20(_a); tokenB = IERC20(_b); lp = LPToken(_lp);
+        lp.setDex(address(this));
+    }
+
+    function addLiquidity(uint256 amountA, uint256 amountB) external {
+        require(amountA > 0 && amountB > 0, "zero");
+        tokenA.transferFrom(msg.sender, address(this), amountA);
+        tokenB.transferFrom(msg.sender, address(this), amountB);
+        reserveA += amountA; reserveB += amountB;
+        uint256 id = lp.mint(msg.sender);
+        records[id] = Record(amountA, amountB);
+    }
+
+    function removeLiquidity(uint256 id) external {
+        require(lp.ownerOf(id) == msg.sender, "not owner");
+        Record memory r = records[id];
+        lp.burn(id);
+        tokenA.transfer(msg.sender, r.amountA);
+        tokenB.transfer(msg.sender, r.amountB);
+        reserveA -= r.amountA; reserveB -= r.amountB;
+    }
+
+    function swapAForB(uint256 amountAIn) external {
+        require(amountAIn > 0, "zero");
+        uint256 amountInWithFee = amountAIn * 997;
+        uint256 amountBOut = (reserveB * amountInWithFee) / (reserveA * 1000 + amountInWithFee);
+        require(amountBOut > 0 && amountBOut < reserveB, "invalid");
+        tokenA.transferFrom(msg.sender, address(this), amountAIn);
+        tokenB.transfer(msg.sender, amountBOut);
+        reserveA += amountAIn; reserveB -= amountBOut;
+    }
+
+    function swapBForA(uint256 amountBIn) external {
+        require(amountBIn > 0, "zero");
+        uint256 amountInWithFee = amountBIn * 997;
+        uint256 amountAOut = (reserveA * amountInWithFee) / (reserveB * 1000 + amountInWithFee);
+        require(amountAOut > 0 && amountAOut < reserveA, "invalid");
+        tokenB.transferFrom(msg.sender, address(this), amountBIn);
+        tokenA.transfer(msg.sender, amountAOut);
+        reserveB += amountBIn; reserveA -= amountAOut;
+    }
+}
+
+    interface IDEX {
+    function swapAForB(uint256 amountAIn) external;
+    function swapBForA(uint256 amountBIn) external;
+}
+
+    contract Arbitrage {
+    function arb(address dex1, address dex2, address tokenA, address tokenB, uint256 amountAIn) external {
+        IERC20(tokenA).transferFrom(msg.sender, address(this), amountAIn);
+        IERC20(tokenA).approve(dex1, amountAIn);
+        uint256 bBefore = IERC20(tokenB).balanceOf(address(this));
+        IDEX(dex1).swapAForB(amountAIn);
+        uint256 bGot = IERC20(tokenB).balanceOf(address(this)) - bBefore;
+        IERC20(tokenB).approve(dex2, bGot);
+        uint256 aBefore = IERC20(tokenA).balanceOf(address(this));
+        IDEX(dex2).swapBForA(bGot);
+        uint256 aFinal = IERC20(tokenA).balanceOf(address(this)) - aBefore;
+        require(aFinal > amountAIn, "No profit, revert");
+        IERC20(tokenA).transfer(msg.sender, aFinal);
+    }
+}
 
 
 ## 参考内容
