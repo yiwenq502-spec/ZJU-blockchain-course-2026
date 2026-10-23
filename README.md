@@ -25,7 +25,6 @@
       npm run dev
 启动React前端服务，并在浏览器中打开http://localhost:3000`。
 <img width="449" height="128" alt="image" src="https://github.com/user-attachments/assets/2e929456-e4f7-47ab-9bdf-d0b4d6a9e1e5" />
-<img width="1080" height="720" alt="670b6c751297197df97ee5ea2292533f" src="https://github.com/user-attachments/assets/8db60b0f-34f6-4b1d-b3f4-9b9cb66141e8" />
 <img width="1080" height="720" alt="e1613bef9e6886705c14acd8d14cdba7" src="https://github.com/user-attachments/assets/07326e11-5298-4760-b42f-0a3789aadadb" />
 
 ## 5、功能测试与验证
