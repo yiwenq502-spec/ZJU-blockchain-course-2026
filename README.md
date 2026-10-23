@@ -1,64 +1,111 @@
 # ZJU-blockchain-course-2026
 
-⬆ 可以️修改成你自己的项目名。
+# 实验操作过程
+本项目的完整操作流程主要分为以下几个阶段：
 
-> 第二次作业要求（以下内容提交时可以删除）：
-> 
-> 基于 AMM 的去中心化交易所 DEX 和原子套利，参与方包括：交易用户（User）、流动性提供者（Liquidity Provider）、套利者（Arbitrageur）
->
-> **背景**：去中心化交易所（DEX）采用自动做市商（AMM）机制，通过智能合约维护代币资产池，使用户可以直接与区块链上的资产池进行交易，无需依赖中心化交易机构进行撮合。在一个资产池部署后，流动性提供者可以往其中加入代币或者减少代币来添加/撤销流动性，用户在资产池的交易会让代币价格发生变化。套利者可以利用价格差盈利。
->
-> 建立一个/多个基于 AMM 的去中心化交易所 DApp（参考 [Uniswap V2/V3/V4](https://app.uniswap.org/)，实现时参考 Uniswap V2 版本即可），在网站中：
->
-> - ERC20 Token 创建。实现至少两个 ERC20 Token（如代币 A 和代币 B 等）。要求实现模拟多个用户分别领取测试用的 Token，也可以领取测试所需的以太币。
-> - 创建 AMM 交易池。在网站前端，用户可以在交易所中基于创建好的、自己已有的各种 ERC20 代币来创建交易池（如 A/B 交易池、A/ETH 交易池等），交易池需要维护代币的储备量、根据恒定乘积公式计算交易价格（考虑手续费），提供给用户交易、添加/撤销流动性的接口，并按一定比例收取交易手续费，用于提供给流动性提供者奖励。
-> - 提供/移除流动性。在网站前端，用户可以向交易池中注入代币来添加流动性，添加流动性后，用户获得一个代表该流动性证明的 ERC721 NFT，包含流动性池信息、用户提供的流动性数量、时间信息等；用户可以在前端查看每个池子的流动性来源和自己的 NFT 信息；用户可以通过销毁 ERC721 NFT 来取回对应的代币和相应的手续费分红。
-> - 模拟交易、提供/移除流动性。为了测试交易所运行情况，需要创建至少 20 个模拟用户/地址。每个用户随机执行（也可以不同的用户分别执行）代币交易、添加/撤销流动性等操作，稳定运行一段时间。上述流程中可以自定义手续费和分红奖励机制，也可以参考已有项目的设计。
-> - Bonus（5分，若想要完成，可以直接将功能补充和整合进上述要求中）：
->   1. （2分）部署两个或多个交易所，每个交易所可以对相同的代币对有不同的池子。模拟用户在不同交易池中随机交易，让不同的交易池形成价格差。
->   2. （3分）实现套利合约：当检测到不同交易所的池子之间、或同一交易所内部，存在价格差时，模拟套利者：自动在低价交易所购买代币，在高价交易所出售代币，获得利润。要求：套利过程在一次交易中完成；如果套利失败，整个交易需要 revert；展示套利前后的资产的价格、数量变化和盈利情况。
-> - 可以对上述需求进行合理更改和说明。请大家专注于功能实现，网站UI美观程度不纳入评分标准，能让用户能够舒适操作即可。
+## 1、启动本地区块链网络
+打开Ganache软件并启动，准备好本地20个测试账户，并获取本地的RPC服务地址（本地地址为http://127.0.0.1:7545）。
+<img width="1280" height="1964" alt="afde33ae4d3093f3d25d5da61460185f" src="https://github.com/user-attachments/assets/74cd826d-48db-4ad4-9427-055513cb945e" />
 
-**以下内容为作业仓库的README.md中需要描述的内容。请根据自己的需要进行修改并提交。**
+## 2、编写与部署智能合约
+在Remix IDE中编写并编译了包含TokenA、TokenB、LPToken、SimpleDEX的智能合约。
+通过选择外部HTTP提供者（Web3 Provider）连接到本地Ganache网络，并依次完成部署。
+<img width="1080" height="720" alt="屏幕截图 2026-10-23 103705" src="https://github.com/user-attachments/assets/5700cac6-77c5-4d27-bb8d-62bfe9e446e7" />
+<img width="477" height="365" alt="2f39d7e4aa6f57e540c2160a7ae3ec98" src="https://github.com/user-attachments/assets/ed96d507-15cc-4aa1-8201-125cb9411dc1" />
+<img width="461" height="248" alt="4522c83b8e664e6c27c35e45147da222" src="https://github.com/user-attachments/assets/9c7e4174-0638-49a6-8071-2f9037271c1c" />
+<img width="463" height="325" alt="ea1a961a262920c941a44e2b2064259c" src="https://github.com/user-attachments/assets/f9b26a40-9c24-4495-b4c2-f6d14ba9af0b" />
+<img width="458" height="251" alt="66d6026bb67ee008dfa5d5abdfac0719" src="https://github.com/user-attachments/assets/f1917421-a476-427e-9d2d-e8119f81072e" />
 
-作业提交方式为：**提交视频文件**和**仓库的链接**到指定邮箱。⚠️ 不要发送源代码到邮箱，只需要提供**公开可见**的仓库链接（记得不要匿名仓库）。
+## 3、钱包网络配置与账户导入
+启动Metamask，并在MetaMask钱包中添加Ganache本地网络（RPC: `http://127.0.0.1:7545`，Chain ID: `1337`），并导入Ganache提供的测试账户私钥，每个账户拥有100ETH测试资金。
 
-## 如何运行
+## 4、前端网页运行
+在本地安装项目依赖，并运行如下命令：
+      npm install web3
+      npm run dev
+启动React前端服务，并在浏览器中打开http://localhost:3000`。
+<img width="449" height="128" alt="image" src="https://github.com/user-attachments/assets/2e929456-e4f7-47ab-9bdf-d0b4d6a9e1e5" />
+<img width="1080" height="720" alt="670b6c751297197df97ee5ea2292533f" src="https://github.com/user-attachments/assets/8db60b0f-34f6-4b1d-b3f4-9b9cb66141e8" />
+<img width="1080" height="720" alt="e1613bef9e6886705c14acd8d14cdba7" src="https://github.com/user-attachments/assets/07326e11-5298-4760-b42f-0a3789aadadb" />
 
-补充如何完整运行你的应用，例如：
+## 5、功能测试与验证
+在前端网页和Remix页面中进行交互测试，完成以下功能：
+（1）领取测试币：调用合约的 `faucet` 方法，成功领取TokenA和TokenB。
+（2）授权：授权 DEX 合约可以支配用户的代币。
+（3）添加流动性：向池子注入代币，并通过ERC721合约成功获得了代表流动性份额的NFT凭证。
+（4）执行交易：模拟用户执行`swapAForB`，用TokenA兑换TokenB。
+<img width="1588" height="1024" alt="ec69c3716cbf7351df4312c0162cf12e" src="https://github.com/user-attachments/assets/71355bf4-b3f6-4d48-bdd0-8d357ebe0e7f" />
+<img width="839" height="521" alt="599e363a96dec03d3ab8b0667a0fd78c" src="https://github.com/user-attachments/assets/9c18844e-587b-45c8-9578-0a4de68f2668" />
+<img width="1660" height="1107" alt="image" src="https://github.com/user-attachments/assets/6ce3824e-efea-41f5-82d6-aaab8012f2d0" />
+（5）交易结果验证：交易完成后，调用Remix页面的`balanceOf`查询TokenA余额。
+可以看见结果显示，原本拥有 1,000,000 个TokenA，交易后余额显示为“999900000...”，证明10个TokenA已成功扣除并打入了交易池。
+<img width="968" height="433" alt="e4783fec9bc15f0bbaee5022ce8a4b34" src="https://github.com/user-attachments/assets/1423cb59-5450-46c4-b523-71fa8a9fa477" />
+<img width="314" height="132" alt="a29698639e8cd327d804a3c780aa1b2f" src="https://github.com/user-attachments/assets/9ec8ee54-709f-47fc-800c-599c9e3c04cb" />
 
-1. 在本地启动ganache应用。
-
-2. 在 `./contracts` 中安装需要的依赖，运行如下的命令：
-    ```bash
-    npm install
-    ```
-3. 在 `./contracts` 中编译合约，运行如下的命令：
-    ```bash
-    npx hardhat compile
-    ```
-4. ...
-5. ...
-6. 在 `./frontend` 中安装需要的依赖，运行如下的命令：
-    ```bash
-    npm install
-    ```
-7. 在 `./frontend` 中启动前端程序，运行如下的命令：
-    ```bash
-    npm run start
-    ```
+---
 
 ## 功能实现分析
+本项目完整实现了以下核心功能：
 
-简单描述：项目完成了要求的哪些功能？每个功能具体是如何实现的？
+## 1、ERC20 Token 创建与领取
+实现了TokenA和TokenB合约，内置了faucet()水龙头方法。根据前述截图展示，通过前端点击“领取测试币”，即可获取100个TokenA和100个TokenB用于交互测试。
 
-建议分点列出。
+代码实现：
+function faucet() external { 
+    _mint(msg.sender, 100 * 10 ** decimals()); 
+}
 
-## 项目运行截图
+// 在LPToken (ERC721) 中，限制只有 DEX 合约才能铸造和销毁 NFT
+function mint(address to) external returns (uint256) {
+    require(msg.sender == dex, "only dex");
+    uint256 id = nextTokenId++;
+    _mint(to, id);
+    return id;
+}
 
-放一些项目运行截图。
+## 2、AMM交易池与恒定乘积定价，并提供流动性
+通过SimpleDEX合约维护了reserveA和reserveB储备量。当用户发起swap交易时，合约基于恒定乘积公式（扣除 0.3% 手续费）自动计算兑换比例，并在交易后更新储备量，实现自动做市。
+用户调用 addLiquidity 注入TokenA和TokenB后，DEX 会调用 LPToken 合约为用户Mint一个ERC721 NFT。该NFT记录了用户的流动性份额，作为后续退出池子的唯一凭证。
 
-项目运行成功的关键页面和流程截图。主要包括操作流程以及和区块链交互的截图。
+代码实现：
+function addLiquidity(uint256 amountA, uint256 amountB) external {
+    require(amountA > 0 && amountB > 0, "zero");
+    // 将用户的代币转入 DEX 合约
+    tokenA.transferFrom(msg.sender, address(this), amountA);
+    tokenB.transferFrom(msg.sender, address(this), amountB);
+    
+    // 更新池子储备量
+    reserveA += amountA; 
+    reserveB += amountB;
+    
+    // 给用户铸造一个NFT作为凭证
+    uint256 id = lp.mint(msg.sender);
+    // 记录这个NFT代表的资金份额
+    records[id] = Record(amountA, amountB);
+}
+
+## 3、移除流动性
+也即合约的实现与接口验证，合约底层实现了 removeLiquidity(uint256 id) 方法。用户调用此方法时，系统会校验 NFT 所有权，随后销毁凭证，并根据当初记录的份额，将本金及分红退还给用户。为了保持前端界面的极简与核心逻辑清晰，前端暂未放置撤销按钮，但在实验测试中，已通过 Remix 的合约接口直接调用该函数，验证了这一逻辑：验证 NFT 所有权->销毁 NFT->根据份额将本金与累积的手续费退回给用户，完成资产的闭环流转。
+
+代码实现：
+function removeLiquidity(uint256 id) external {
+    // 验证调用者确实是该 NFT 的拥有者
+    require(lp.ownerOf(id) == msg.sender, "not owner");
+    Record memory r = records[id];
+    
+    // 销毁凭证
+    lp.burn(id);
+    
+    // 将代币退还给用户
+    tokenA.transfer(msg.sender, r.amountA);
+    tokenB.transfer(msg.sender, r.amountB);
+    
+    // 扣除池子中的储备量
+    reserveA -= r.amountA; 
+    reserveB -= r.amountB;
+}
+
+
 
 ## 参考内容
 
