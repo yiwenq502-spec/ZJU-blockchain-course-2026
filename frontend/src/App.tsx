@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Web3 from 'web3';
 
 // 
-const tokenA_ABI = [[
+const tokenA_ABI = [
   {
     "inputs": [
       {
@@ -323,8 +323,8 @@ const tokenA_ABI = [[
     "stateMutability": "view",
     "type": "function"
   }
-]];
-const tokenB_ABI = [ [
+];
+const tokenB_ABI = [
   {
     "inputs": [
       {
@@ -645,8 +645,8 @@ const tokenB_ABI = [ [
     "stateMutability": "view",
     "type": "function"
   }
-] ];
-const dex_ABI = [[
+];
+const dex_ABI = [
   {
     "inputs": [
       {
@@ -1156,7 +1156,7 @@ const dex_ABI = [[
     "stateMutability": "view",
     "type": "function"
   }
-]];
+];
 
 // 
 const tokenA_ADDRESS = "0x75178E7AFA1a3e2d8ea5102862f43E324F1eC139";
