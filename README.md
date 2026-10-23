@@ -52,15 +52,15 @@
 
 代码实现：
 function faucet() external { 
-    _mint(msg.sender, 100 * 10 ** decimals()); 
+     _mint(msg.sender, 100 * 10 ** decimals()); 
 }
 
-// 在LPToken (ERC721) 中，限制只有 DEX 合约才能铸造和销毁 NFT
-function mint(address to) external returns (uint256) {
-    require(msg.sender == dex, "only dex");
-    uint256 id = nextTokenId++;
-    _mint(to, id);
-    return id;
+     // 在LPToken (ERC721) 中，限制只有 DEX 合约才能铸造和销毁 NFT
+     function mint(address to) external returns (uint256) {
+     require(msg.sender == dex, "only dex");
+     uint256 id = nextTokenId++;
+     _mint(to, id);
+     return id;
 }
 
 ## 2、AMM交易池与恒定乘积定价，并提供流动性
